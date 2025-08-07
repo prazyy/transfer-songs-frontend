@@ -118,7 +118,7 @@ export default function PlaylistConverter() {
             value={spotifyUrl}
             onChange={(e) => setSpotifyUrl(e.target.value)}
             placeholder="https://open.spotify.com/playlist/..."
-            className="w-full pl-14 pr-6 py-5 bg-slate-800/60 border-2 border-slate-600/50 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50 transition-all duration-300 text-base sm:text-lg hover:border-slate-500/70"
+            className="w-full pl-14 pr-6 py-5 bg-slate-800/60 border-2 border-slate-600/50 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:border-green-500 transition-all duration-300 text-base sm:text-lg hover:border-slate-500/70"
             disabled={state.isLoading}
           />
         </div>
@@ -176,7 +176,7 @@ export default function PlaylistConverter() {
               type="text"
               value={state.result.youtubeMusicLink}
               readOnly
-              className="flex-1 px-5 py-4 bg-slate-800/60 border border-slate-600/50 rounded-xl text-white text-base break-all focus:outline-none focus:ring-2 focus:ring-green-500/50"
+              className="flex-1 px-5 py-4 bg-slate-800/60 border border-slate-600/50 rounded-xl text-white text-base break-all focus:outline-none focus:border-green-500"
             />
             <div className="flex gap-2">
               <button
