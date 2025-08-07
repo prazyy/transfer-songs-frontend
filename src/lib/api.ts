@@ -72,7 +72,7 @@ export async function convertPlaylist(
       playlistUrl: request.playlistUrl,
     };
 
-    const response = await fetch(`${API_URL}/api/convert`, {
+    const response = await fetch(`${API_URL}/convert`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
