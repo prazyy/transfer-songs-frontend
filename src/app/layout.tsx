@@ -45,11 +45,18 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${inter.variable} font-sans bg-dark-gradient min-h-screen antialiased`}
+        className={`${inter.variable} font-sans min-h-screen antialiased bg-slate-950 text-slate-100`}
       >
-        <div className="relative min-h-screen bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900">
+        <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
           {/* Background pattern */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,197,94,0.1),transparent_50%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,197,94,0.05),transparent_70%)] pointer-events-none" />
+
+          {/* Animated background dots */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-green-400 rounded-full animate-pulse delay-1000"></div>
+            <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-green-300 rounded-full animate-pulse delay-500"></div>
+          </div>
 
           {/* Main content */}
           <main className="relative z-10">{children}</main>
@@ -63,6 +70,7 @@ export default function RootLayout({
                 background: "#1e293b",
                 color: "#f8fafc",
                 border: "1px solid #475569",
+                borderRadius: "12px",
               },
               success: {
                 iconTheme: {

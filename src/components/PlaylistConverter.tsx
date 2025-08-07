@@ -80,23 +80,23 @@ export default function PlaylistConverter() {
   const targetPlatformData = platforms.find((p) => p.value === targetPlatform);
 
   return (
-    <div className="bg-dark-800/50 backdrop-blur-sm border border-dark-700 rounded-2xl p-4 sm:p-8 shadow-2xl animate-fade-in">
+    <div className="bg-slate-900/80 backdrop-blur-lg border border-slate-700/50 rounded-3xl p-6 sm:p-10 shadow-2xl hover:shadow-green-500/10 transition-all duration-300">
       {/* Platform Selection */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold text-white mb-6 text-center">
+      <div className="mb-10">
+        <h2 className="text-2xl font-bold text-white mb-8 text-center">
           Convert From
         </h2>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">
           {/* Source Platform */}
-          <div className="w-full sm:flex-1 sm:max-w-[200px]">
+          <div className="w-full sm:flex-1 sm:max-w-[220px]">
             <div
-              className={`p-4 sm:p-6 rounded-xl border-2 ${sourcePlatformData?.bgColor} text-center transition-all duration-200 hover:scale-105`}
+              className={`p-6 sm:p-8 rounded-2xl border-2 ${sourcePlatformData?.bgColor} text-center transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer group`}
             >
-              <div className="text-3xl sm:text-2xl mb-2">
+              <div className="text-4xl sm:text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">
                 {sourcePlatformData?.icon}
               </div>
-              <div className="text-white font-medium text-lg sm:text-base">
+              <div className="text-white font-semibold text-xl sm:text-lg">
                 {sourcePlatformData?.label}
               </div>
             </div>
@@ -105,22 +105,22 @@ export default function PlaylistConverter() {
           {/* Swap Button */}
           <button
             onClick={handleSwapPlatforms}
-            className="p-3 rounded-full bg-primary-500/20 border border-primary-500/30 text-primary-400 hover:bg-primary-500/30 transition-all duration-200 hover:scale-110 rotate-90 sm:rotate-0"
+            className="p-4 rounded-full bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30 hover:text-green-300 transition-all duration-300 hover:scale-110 rotate-90 sm:rotate-0 group"
             disabled={state.isLoading}
             aria-label="Swap platforms"
           >
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-6 h-6 group-hover:rotate-180 transition-transform duration-300" />
           </button>
 
           {/* Target Platform */}
-          <div className="w-full sm:flex-1 sm:max-w-[200px]">
+          <div className="w-full sm:flex-1 sm:max-w-[220px]">
             <div
-              className={`p-4 sm:p-6 rounded-xl border-2 ${targetPlatformData?.bgColor} text-center transition-all duration-200 hover:scale-105`}
+              className={`p-6 sm:p-8 rounded-2xl border-2 ${targetPlatformData?.bgColor} text-center transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer group`}
             >
-              <div className="text-3xl sm:text-2xl mb-2">
+              <div className="text-4xl sm:text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">
                 {targetPlatformData?.icon}
               </div>
-              <div className="text-white font-medium text-lg sm:text-base">
+              <div className="text-white font-semibold text-xl sm:text-lg">
                 {targetPlatformData?.label}
               </div>
             </div>
@@ -129,15 +129,15 @@ export default function PlaylistConverter() {
       </div>
 
       {/* URL Input */}
-      <div className="mb-6">
+      <div className="mb-8">
         <label
           htmlFor="playlist-url"
-          className="block text-sm font-medium text-dark-300 mb-3"
+          className="block text-lg font-semibold text-slate-200 mb-4"
         >
           Paste your {sourcePlatformData?.label} playlist URL
         </label>
-        <div className="relative">
-          <Music className="absolute left-4 top-1/2 transform -translate-y-1/2 text-dark-400 w-5 h-5" />
+        <div className="relative group">
+          <Music className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 w-6 h-6 group-focus-within:text-green-400 transition-colors duration-300" />
           <input
             id="playlist-url"
             type="url"
@@ -148,7 +148,7 @@ export default function PlaylistConverter() {
                 ? "open.spotify.com"
                 : "music.youtube.com"
             }/playlist/...`}
-            className="w-full pl-12 pr-4 py-4 bg-dark-700/50 border border-dark-600 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-sm sm:text-base"
+            className="w-full pl-14 pr-6 py-5 bg-slate-800/60 border-2 border-slate-600/50 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50 transition-all duration-300 text-base sm:text-lg hover:border-slate-500/70"
             disabled={state.isLoading}
           />
         </div>
