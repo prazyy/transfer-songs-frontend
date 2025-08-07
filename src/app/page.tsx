@@ -11,8 +11,7 @@ export default function Home() {
               SongTransfer
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
-              Convert your playlists between Spotify and YouTube Music
-              instantly.
+              Convert your Spotify playlists to YouTube Music instantly.
               <span className="text-green-400 font-semibold block mt-2">
                 No login required!
               </span>

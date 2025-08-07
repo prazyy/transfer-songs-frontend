@@ -1,72 +1,53 @@
 "use client";
 
 import { useState } from "react";
-import { Music, ArrowRight, CheckCircle } from "lucide-react";
+import {
+  Music,
+  ArrowRight,
+  CheckCircle,
+  ExternalLink,
+  Copy,
+} from "lucide-react";
 import toast from "react-hot-toast";
-import { Platform, ConvertState } from "@/types";
-import { convertPlaylist } from "@/lib/api";
+import { convertSpotifyPlaylist, ConvertResponse } from "@/lib/api";
 import Button from "./Button";
-import CopyButton from "./CopyButton";
-import Alert from "./Alert";
+import LoadingSpinner from "./LoadingSpinner";
 
-const platforms = [
-  {
-    value: "spotify" as Platform,
-    label: "Spotify",
-    icon: "🎵",
-    color: "from-green-500 to-green-600",
-    bgColor: "bg-green-500/10 border-green-500/20",
-  },
-  {
-    value: "youtube" as Platform,
-    label: "YouTube Music",
-    icon: "🎶",
-    color: "from-red-500 to-red-600",
-    bgColor: "bg-red-500/10 border-red-500/20",
-  },
-];
+interface ConvertState {
+  isLoading: boolean;
+  error: string | null;
+  result: ConvertResponse | null;
+}
 
 export default function PlaylistConverter() {
-  const [playlistUrl, setPlaylistUrl] = useState("");
-  const [sourcePlatform, setSourcePlatform] = useState<Platform>("spotify");
-  const [targetPlatform, setTargetPlatform] = useState<Platform>("youtube");
+  const [spotifyUrl, setSpotifyUrl] = useState("");
   const [state, setState] = useState<ConvertState>({
     isLoading: false,
     error: null,
     result: null,
   });
 
-  const handleSwapPlatforms = () => {
-    const temp = sourcePlatform;
-    setSourcePlatform(targetPlatform);
-    setTargetPlatform(temp);
-  };
-
   const handleConvert = async () => {
-    if (!playlistUrl.trim()) {
-      toast.error("Please enter a playlist URL");
+    if (!spotifyUrl.trim()) {
+      toast.error("Please enter a Spotify playlist URL");
       return;
     }
 
     setState({ isLoading: true, error: null, result: null });
 
     try {
-      const result = await convertPlaylist({
-        sourcePlatform,
-        targetPlatform,
-        playlistUrl: playlistUrl.trim(),
-      });
+      const result = await convertSpotifyPlaylist(spotifyUrl);
 
-      if (result.status === "success") {
+      if (result.youtubeMusicLink) {
         setState({ isLoading: false, error: null, result });
         toast.success("Playlist converted successfully!");
       } else {
         setState({
           isLoading: false,
-          error: result.message || "Conversion failed",
+          error: result.error || "Conversion failed",
           result: null,
         });
-        toast.error(result.message || "Conversion failed");
+        toast.error(result.error || "Conversion failed");
       }
     } catch (error) {
       const errorMessage =
@@ -76,78 +57,67 @@ export default function PlaylistConverter() {
     }
   };
 
-  const sourcePlatformData = platforms.find((p) => p.value === sourcePlatform);
-  const targetPlatformData = platforms.find((p) => p.value === targetPlatform);
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Link copied to clipboard!");
+    } catch (error) {
+      toast.error("Failed to copy link");
+    }
+  };
+
+  const openInNewTab = (url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div className="bg-slate-900/80 backdrop-blur-lg border border-slate-700/50 rounded-3xl p-6 sm:p-10 shadow-2xl hover:shadow-green-500/10 transition-all duration-300">
-      {/* Platform Selection */}
-      <div className="mb-10">
-        <h2 className="text-2xl font-bold text-white mb-8 text-center">
-          Convert From
+      {/* Header */}
+      <div className="mb-10 text-center">
+        <h2 className="text-3xl font-bold text-white mb-4">
+          Spotify to YouTube Music
         </h2>
+        <p className="text-slate-300 text-lg">
+          Convert your Spotify playlists to YouTube Music instantly
+        </p>
+      </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">
-          {/* Source Platform */}
-          <div className="w-full sm:flex-1 sm:max-w-[220px]">
-            <div
-              className={`p-6 sm:p-8 rounded-2xl border-2 ${sourcePlatformData?.bgColor} text-center transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer group`}
-            >
-              <div className="text-4xl sm:text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">
-                {sourcePlatformData?.icon}
-              </div>
-              <div className="text-white font-semibold text-xl sm:text-lg">
-                {sourcePlatformData?.label}
-              </div>
-            </div>
-          </div>
+      {/* Platform Visual */}
+      <div className="flex items-center justify-center gap-6 mb-8">
+        {/* Spotify */}
+        <div className="p-6 rounded-2xl border-2 bg-green-500/10 border-green-500/20 text-center">
+          <div className="text-4xl mb-3">🎵</div>
+          <div className="text-white font-semibold text-lg">Spotify</div>
+        </div>
 
-          {/* Swap Button */}
-          <button
-            onClick={handleSwapPlatforms}
-            className="p-4 rounded-full bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30 hover:text-green-300 transition-all duration-300 hover:scale-110 rotate-90 sm:rotate-0 group"
-            disabled={state.isLoading}
-            aria-label="Swap platforms"
-          >
-            <ArrowRight className="w-6 h-6 group-hover:rotate-180 transition-transform duration-300" />
-          </button>
+        {/* Arrow */}
+        <div className="p-4 rounded-full bg-green-500/20 border border-green-500/30 text-green-400">
+          <ArrowRight className="w-6 h-6" />
+        </div>
 
-          {/* Target Platform */}
-          <div className="w-full sm:flex-1 sm:max-w-[220px]">
-            <div
-              className={`p-6 sm:p-8 rounded-2xl border-2 ${targetPlatformData?.bgColor} text-center transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer group`}
-            >
-              <div className="text-4xl sm:text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">
-                {targetPlatformData?.icon}
-              </div>
-              <div className="text-white font-semibold text-xl sm:text-lg">
-                {targetPlatformData?.label}
-              </div>
-            </div>
-          </div>
+        {/* YouTube Music */}
+        <div className="p-6 rounded-2xl border-2 bg-red-500/10 border-red-500/20 text-center">
+          <div className="text-4xl mb-3">🎶</div>
+          <div className="text-white font-semibold text-lg">YouTube Music</div>
         </div>
       </div>
 
       {/* URL Input */}
       <div className="mb-8">
         <label
-          htmlFor="playlist-url"
+          htmlFor="spotify-url"
           className="block text-lg font-semibold text-slate-200 mb-4"
         >
-          Paste your {sourcePlatformData?.label} playlist URL
+          Paste your Spotify playlist URL
         </label>
         <div className="relative group">
           <Music className="absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 w-6 h-6 group-focus-within:text-green-400 transition-colors duration-300" />
           <input
-            id="playlist-url"
+            id="spotify-url"
             type="url"
-            value={playlistUrl}
-            onChange={(e) => setPlaylistUrl(e.target.value)}
-            placeholder={`https://${
-              sourcePlatform === "spotify"
-                ? "open.spotify.com"
-                : "music.youtube.com"
-            }/playlist/...`}
+            value={spotifyUrl}
+            onChange={(e) => setSpotifyUrl(e.target.value)}
+            placeholder="https://open.spotify.com/playlist/..."
             className="w-full pl-14 pr-6 py-5 bg-slate-800/60 border-2 border-slate-600/50 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50 transition-all duration-300 text-base sm:text-lg hover:border-slate-500/70"
             disabled={state.isLoading}
           />
@@ -157,62 +127,76 @@ export default function PlaylistConverter() {
       {/* Convert Button */}
       <Button
         onClick={handleConvert}
-        disabled={state.isLoading || !playlistUrl.trim()}
+        disabled={state.isLoading || !spotifyUrl.trim()}
         isLoading={state.isLoading}
         className="w-full"
         size="lg"
       >
         {state.isLoading ? (
-          "Converting Playlist..."
+          <>
+            <LoadingSpinner size="sm" className="mr-2" />
+            Converting to YouTube Music...
+          </>
         ) : (
           <>
             <ArrowRight className="w-5 h-5" />
-            Convert Playlist
+            Convert to YouTube Music
           </>
         )}
       </Button>
 
       {/* Error Display */}
       {state.error && (
-        <Alert
-          variant="error"
-          title="Conversion Failed"
-          className="mt-6"
-          onClose={() => setState((prev) => ({ ...prev, error: null }))}
-        >
-          {state.error}
-        </Alert>
+        <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
+          <div className="flex items-center gap-3 text-red-400 mb-2">
+            <div className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">!</span>
+            </div>
+            <span className="font-semibold">Conversion Failed</span>
+          </div>
+          <p className="text-slate-300">{state.error}</p>
+        </div>
       )}
 
       {/* Success Result */}
-      {state.result?.status === "success" &&
-        state.result.convertedPlaylistUrl && (
-          <div className="mt-8 p-6 bg-green-500/10 border border-green-500/20 rounded-2xl">
-            <div className="flex items-center gap-3 text-green-400 mb-4">
-              <CheckCircle className="w-6 h-6" />
-              <span className="font-semibold text-lg">
-                Conversion Successful!
-              </span>
-            </div>
-            <p className="text-slate-300 mb-6 text-base">
-              Your playlist has been converted to {targetPlatformData?.label}.
-              Click the button below to copy the link:
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <input
-                type="text"
-                value={state.result.convertedPlaylistUrl}
-                readOnly
-                className="flex-1 px-5 py-4 bg-slate-800/60 border border-slate-600/50 rounded-xl text-white text-base break-all focus:outline-none focus:ring-2 focus:ring-green-500/50"
-              />
-              <CopyButton
-                text={state.result.convertedPlaylistUrl}
-                size="md"
-                className="w-full sm:w-auto"
-              />
+      {state.result?.youtubeMusicLink && (
+        <div className="mt-8 p-6 bg-green-500/10 border border-green-500/20 rounded-2xl">
+          <div className="flex items-center gap-3 text-green-400 mb-4">
+            <CheckCircle className="w-6 h-6" />
+            <span className="font-semibold text-lg">
+              Conversion Successful!
+            </span>
+          </div>
+          <p className="text-slate-300 mb-6 text-base">
+            Your Spotify playlist has been converted to YouTube Music. Use the
+            buttons below to copy the link or open it directly:
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <input
+              type="text"
+              value={state.result.youtubeMusicLink}
+              readOnly
+              className="flex-1 px-5 py-4 bg-slate-800/60 border border-slate-600/50 rounded-xl text-white text-base break-all focus:outline-none focus:ring-2 focus:ring-green-500/50"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => copyToClipboard(state.result!.youtubeMusicLink!)}
+                className="px-6 py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-colors duration-200 flex items-center gap-2"
+              >
+                <Copy className="w-4 h-4" />
+                Copy
+              </button>
+              <button
+                onClick={() => openInNewTab(state.result!.youtubeMusicLink!)}
+                className="px-6 py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-semibold transition-colors duration-200 flex items-center gap-2"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Open
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }
