@@ -187,21 +187,23 @@ export default function PlaylistConverter() {
       {/* Success Result */}
       {state.result?.status === "success" &&
         state.result.convertedPlaylistUrl && (
-          <div className="mt-6 p-6 bg-primary-500/10 border border-primary-500/20 rounded-xl">
-            <div className="flex items-center gap-2 text-primary-400 mb-3">
-              <CheckCircle className="w-5 h-5" />
-              <span className="font-medium">Conversion Successful!</span>
+          <div className="mt-8 p-6 bg-green-500/10 border border-green-500/20 rounded-2xl">
+            <div className="flex items-center gap-3 text-green-400 mb-4">
+              <CheckCircle className="w-6 h-6" />
+              <span className="font-semibold text-lg">
+                Conversion Successful!
+              </span>
             </div>
-            <p className="text-dark-300 mb-4">
+            <p className="text-slate-300 mb-6 text-base">
               Your playlist has been converted to {targetPlatformData?.label}.
               Click the button below to copy the link:
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-4">
               <input
                 type="text"
                 value={state.result.convertedPlaylistUrl}
                 readOnly
-                className="flex-1 px-4 py-3 bg-dark-700/50 border border-dark-600 rounded-lg text-white text-sm break-all"
+                className="flex-1 px-5 py-4 bg-slate-800/60 border border-slate-600/50 rounded-xl text-white text-base break-all focus:outline-none focus:ring-2 focus:ring-green-500/50"
               />
               <CopyButton
                 text={state.result.convertedPlaylistUrl}
